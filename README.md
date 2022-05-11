@@ -18,3 +18,5 @@ Para correr la imagen en modo interactivo
 ```console
 $ docker run -p 3000:3000 -it --rm --name wordle wordle
 ```
+
+

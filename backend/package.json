@@ -11,7 +11,12 @@
 	"scripts": {
 		"start": "ts-node server",
 		"test": "jest",
-		"lint": "eslint --fix && prettier --write ."
+		"test:watch": "yarn test -- --watch",
+		"test:all": "yarn test -- --silent --watchAll=false",
+		"test:coverage": "yarn test:all -- --coverage",
+		"lint": "eslint",
+		"format": "eslint --fix && prettier --write .",
+		"build": "tsc --target ES6 --strict true"
 	},
 	"dependencies": {
 		"express": "^4.18.1"

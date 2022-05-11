@@ -28,11 +28,12 @@ jobs:
       - name: "📦 install dependencies"
         uses: bahmutov/npm-install@v1
         with:
+          working-directory: backend
           install-command: yarn --silent
 
       - name: "🔍 run tests"
         working-directory: backend
-        run: yarn test --if-present
+        run: yarn test
 
   lint:
     name: Code standards
@@ -51,6 +52,10 @@ jobs:
 
       - name: "📦 install dependencies"
         uses: bahmutov/npm-install@v1
+        with:
+          working-directory: backend
+          install-command: yarn --frozen-lockfile --silent
 
       - name: "🔍 lint code"
-        run: yarn lint --if-present
+        working-directory: backend
+        run: yarn lint

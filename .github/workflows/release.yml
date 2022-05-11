@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     name: Test and lint
-    uses: ${{ github.repository }}/.github/workflows/development.yml@main
+    uses: .github/workflows/development.yml@main
 
   docker:
     name: Build container

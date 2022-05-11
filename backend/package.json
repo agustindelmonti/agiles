@@ -1,0 +1,18 @@
+{
+  "name": "wordle",
+  "version": "1.0.0",
+  "main": "server.js",
+  "description": "Wordle game",
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "url": "github.com/agustindelmonti/agiles",
+    "type": "git"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

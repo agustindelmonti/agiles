@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-      - alpha
-      - beta
+      - develop
+      - feature/cicd-release
 
 jobs:
   test:
@@ -65,11 +65,14 @@ jobs:
         with:
           node-version: 16
 
-      - name: "🔧 install npm@latest"
-        run: npm i -g npm@latest
+      - name: "🔧 install yarn@latest"
+        run: npm i -g yarn@latest
 
       - name: "📦 install dependencies"
         uses: bahmutov/npm-install@v1
+        with:
+          working-directory: backend
+          install-command: yarn
 
       - name: "📊 repository visualizer"
         id: diagram
@@ -87,7 +90,7 @@ jobs:
           path: public/diagram.svg
 
       - name: "🚀 static app"
-        run: npm run build
+        run: yarn build
 
       - name: "📂 production artifacts"
         uses: actions/upload-artifact@v2

@@ -98,10 +98,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "♻️ clean up artifact paths"
-        run: |
-          rm -rf public/diagram.svg
-          rm -rf supabase/diagrams/
       - name: "📂 download docker artifacts"
         uses: actions/download-artifact@v2
         with:
@@ -117,12 +113,6 @@ jobs:
         with:
           name: build
           path: build
-
-      - name: "📂 download diagram artifacts"
-        uses: actions/download-artifact@v2
-        with:
-          name: diagram
-          path: public/
 
       - name: "🚀 release"
         id: semantic-release
@@ -142,4 +132,3 @@ jobs:
           name: |
             build
             docker
-            diagram

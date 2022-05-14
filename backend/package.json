@@ -14,7 +14,7 @@
 		"test:watch": "yarn test -- --watch",
 		"test:all": "yarn test -- --silent --watchAll=false",
 		"test:coverage": "yarn test:all -- --coverage",
-		"lint": "eslint",
+		"lint": "eslint && prettier --check .",
 		"format": "eslint --fix && prettier --write .",
 		"build": "tsc --target ES6 --strict true"
 	},

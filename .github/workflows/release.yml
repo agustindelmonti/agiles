@@ -17,6 +17,9 @@ jobs:
   docker:
     name: Build container
     runs-on: ubuntu-latest
+    needs:
+      - test
+
     steps:
       - name: "☁️ checkout repository"
         uses: actions/checkout@v2
@@ -49,7 +52,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: latest
 
-      - name: "📦 docker build"
+      - name: "📦 docker build and push to registry"
         uses: docker/build-push-action@v2
         with:
           context: backend
@@ -59,91 +62,41 @@ jobs:
           cache-from: type=gha, scope=${{ github.workflow }}
           cache-to: type=gha, scope=${{ github.workflow }}
 
-  build:
-    name: Build application
-    runs-on: ubuntu-latest
-    steps:
-      - name: "☁️ checkout repository"
-        uses: actions/checkout@v2
-
-      - name: "🔧 setup node"
-        uses: actions/setup-node@v2.1.5
-        with:
-          node-version: 16
-
-      - name: "🔧 install yarn@latest"
-        run: npm i -g yarn@latest
-
-      - name: "📦 install dependencies"
-        uses: bahmutov/npm-install@v1
-        with:
-          working-directory: backend
-          install-command: yarn
-
-      - name: "🚀 static app"
-        working-directory: backend
-        run: yarn build
-
-      - name: "📂 production artifacts"
-        uses: actions/upload-artifact@v2
-        with:
-          name: build
-          path: backend/build
-
   release:
     name: Semantic release
     environment:
       name: production
-      url: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semantic-release.outputs.release-tag }}
+      # url: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semantic-release.outputs.release-tag }}
+      #
     needs:
-      - test
       - docker
-      - build
-    runs-on: ubuntu-latest
+    #runs-on: ubuntu-latest
+    runs-on: self-hosted
     concurrency: production
 
     steps:
-      - name: "☁️ checkout repository"
-        uses: actions/checkout@v2
+      - name: "🔒 log into registry"
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
-          fetch-depth: 0
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "📂 download docker artifacts"
-        uses: actions/download-artifact@v2
-        with:
-          name: docker
-          path: /tmp
+      - name: "📂 pull docker image"
+        run: docker pull ${{ env.REGISTRY }}/agustindelmonti/agiles
 
-      - name: "📦 load tag"
-        run: |
-          docker load --input /tmp/docker.tar
-          docker image ls -a
-
-      - name: "📂 download build artifacts"
-        uses: actions/download-artifact@v2
-        with:
-          name: build
-          path: backend/build
-
-      - name: "Automated Version Bump"
-        id: version-bump
-        uses: "phips28/gh-action-bump-version@master"
-        with:
-          tag-prefix: "v"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: "Output Step"
-        env:
-          NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
-        run: echo "new tag $NEW_TAG"
+      # - name: "📂 pull docker image"
+      #   uses: akhileshns/heroku-deploy@v3.12.12
+      #   with:
+      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+      #     heroku_app_name: "agustindelmonti-agiles"
+      #     heroku_email: "agus.delmonti@gmail.com"
+      #     usedocker: true
 
       - name: "🚀 release"
-        id: release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: yarn semantic-release
+        run: docker rm -f agiles;
+          docker run -p 3000:3000 -d --name agiles ${{ env.REGISTRY }}/agustindelmonti/agiles
 
   cleanup:
     name: Cleanup actions

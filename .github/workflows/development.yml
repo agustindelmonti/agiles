@@ -8,11 +8,13 @@ on:
 jobs:
   test:
     name: "🧪 Test and lint"
-    uses: agustindelmonti/agiles/.github/workflows/test.yml@master
+    uses: agustindelmonti/agiles/.github/workflows/test.yml@develop
 
   docker:
     name: "⚙️ Build"
     runs-on: ubuntu-latest
+    environment:
+      name: development
     needs:
       - test
 

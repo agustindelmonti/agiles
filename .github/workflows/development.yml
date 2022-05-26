@@ -7,64 +7,15 @@ on:
 
 jobs:
   test:
-    name: "🧪 Test and lint"
     uses: agustindelmonti/agiles/.github/workflows/test.yml@develop
-
-  docker:
-    name: "⚙️ Build"
-    runs-on: ubuntu-latest
-    environment:
-      name: development
-    needs:
-      - test
-
-    steps:
-      - name: "☁️ checkout repository"
-        uses: actions/checkout@v2
-
-      - name: "🔧 setup buildx"
-        uses: docker/setup-buildx-action@v1
-
-      - name: "🔧 cache docker layers"
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: "🔧 docker meta"
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: latest
-
-      - name: "📦 docker build"
-        uses: docker/build-push-action@v2
-        with:
-          context: backend
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=docker,dest=/tmp/docker.tar
-          push: false
-          cache-from: type=gha, scope=${{ github.workflow }}
-          cache-to: type=gha, scope=${{ github.workflow }}
-
-      - name: "📂 docker artifacts"
-        uses: actions/upload-artifact@v2
-        with:
-          name: docker
-          path: /tmp/docker.tar
 
   release:
     name: "🚀 Release development"
     environment:
       name: development
-      # url: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semantic-release.outputs.release-tag }}
-      #
+      url: ${{ steps.deploy_url.outputs.url }}
     needs:
-      - docker
+      - test
     runs-on: ubuntu-latest
 
     steps:
@@ -73,29 +24,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "📂 download docker artifacts"
-        uses: actions/download-artifact@v2
+      - name: "🔧 extract branch name"
+        id: extract_branch
+        run: echo "BRANCH_NAME=$(echo ${ GITHUB_REF#refs/heads/ })" >> $GITHUB_ENV
+
+      - name: "🔧 deploy url"
+        id: deploy_url
+        env:
+          APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
+        run: echo "::set-output name=url::$(https://$APP_NAME.herokuapp.com/)"
+
+      - name: "🚀 deploy to heroku"
+        uses: akhileshns/heroku-deploy@v3.12.12
         with:
-          name: docker
-          path: /tmp
-
-      - name: "📦 load tag"
-        run: |
-          docker load --input /tmp/docker.tar
-          docker image ls -a
-
-      - name: "🚀 release"
-        run: docker run -p 3000:3000 -d --name docker docker
-
-  cleanup:
-    name: "♻️ Cleanup actions"
-    needs:
-      - release
-    runs-on: ubuntu-latest
-    steps:
-      - name: "♻️ remove build artifacts"
-        uses: geekyeggo/delete-artifact@v1
-        with:
-          name: |
-            build
-            docker
+          appdir: backend
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true

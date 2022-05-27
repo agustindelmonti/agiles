@@ -11,7 +11,7 @@ env:
 
 jobs:
   test:
-    name: "🧪 Test and lint"
+    name: "🧪 Test"
     uses: agustindelmonti/agiles/.github/workflows/test.yml@master
 
   docker:
@@ -65,38 +65,27 @@ jobs:
   release:
     name: "🚀 Release"
     environment:
-      name: production
-      # url: https://github.com/${{ github.repository }}/releases/tag/${{ steps.semantic-release.outputs.release-tag }}
-      #
+      name: development
+      url: https://wordle-prod.herokuapp.com/
     needs:
-      - docker
-    #runs-on: ubuntu-latest
-    runs-on: self-hosted
+      - test
+    runs-on: ubuntu-latest
     concurrency: production
 
     steps:
-      - name: "🔒 log into registry"
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: "📂 pull docker image"
-        run: docker pull ${{ env.REGISTRY }}/agustindelmonti/agiles
-
-      # - name: "📂 pull docker image"
-      #   uses: akhileshns/heroku-deploy@v3.12.12
-      #   with:
-      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-      #     heroku_app_name: "agustindelmonti-agiles"
-      #     heroku_email: "agus.delmonti@gmail.com"
-      #     usedocker: true
-
-      - name: "🚀 release"
-        run: docker rm -f agiles;
-          docker run -p 3000:3000 -d --name agiles ${{ env.REGISTRY }}/agustindelmonti/agiles
+      - name: "🚀 deploy to heroku"
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          appdir: backend
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true
 
   cleanup:
     name: "♻️ Cleanup actions"

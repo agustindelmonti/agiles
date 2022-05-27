@@ -7,13 +7,14 @@ on:
 
 jobs:
   test:
+    name: "🧪 Test"
     uses: agustindelmonti/agiles/.github/workflows/test.yml@develop
 
   release:
     name: "🚀 Release development"
     environment:
       name: development
-      url: ${{ steps.deploy_url.outputs.url }}
+      url: https://wordle-dev.herokuapp.com/
     needs:
       - test
     runs-on: ubuntu-latest
@@ -23,16 +24,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-
-      - name: "🔧 extract branch name"
-        id: extract_branch
-        run: echo "BRANCH_NAME=$(echo ${ GITHUB_REF#refs/heads/ })" >> $GITHUB_ENV
-
-      - name: "🔧 deploy url"
-        id: deploy_url
-        env:
-          APP_NAME: ${{ secrets.HEROKU_APP_NAME }}
-        run: echo "::set-output name=url::$(https://$APP_NAME.herokuapp.com/)"
 
       - name: "🚀 deploy to heroku"
         uses: akhileshns/heroku-deploy@v3.12.12

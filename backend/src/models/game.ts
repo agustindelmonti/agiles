@@ -14,7 +14,7 @@ export default class Game {
 	}
 
 	public guess(word: string): string {
-		if (this.isFinished()) throw new Error("Game alredy finished")
+		if (this.isFinished()) throw new Error("Game already finished")
 
 		const result = this.validator.check(word) as string
 		this.guesses.push(result)

@@ -1,9 +1,10 @@
 import express from "express"
+import api from "./api"
 
 const app = express()
 
-app.get("/", (req, res) => {
-	res.send("Hello World")
-})
+app.use("/", express.static("public"))
+
+app.use("/api", api)
 
 export default app

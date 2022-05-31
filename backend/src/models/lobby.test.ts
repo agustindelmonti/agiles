@@ -1,5 +1,5 @@
 import Game from "./game"
-import { Lobby } from "./lobby"
+import Lobby from "./lobby"
 
 describe("config lobby", () => {
 	test("username", () => {
@@ -47,6 +47,7 @@ describe("lobby stats", () => {
 		test("victory message", () => {
 			let lobby = new Lobby()
 			lobby.setUsername("pepe")
+			jest.spyOn(lobby, "getRandomWord").mockReturnValue("perro")
 			lobby.startGame()
 			lobby.getGame().guess("perro")
 			expect(lobby.getGameStats()).toEqual("pepe-victory-1")

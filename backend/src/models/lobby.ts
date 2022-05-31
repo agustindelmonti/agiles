@@ -1,11 +1,15 @@
 import Game from "./game"
 
-export class Lobby {
+export default class Lobby {
 	private username: string
 	private game: Game
 	private dificulty: number
+	private language: string
 
-	constructor() {}
+	constructor() {
+		this.dificulty = 5
+		this.language = "es"
+	}
 
 	public setUsername(username: string) {
 		this.username = username
@@ -17,7 +21,6 @@ export class Lobby {
 
 	public startGame() {
 		const randomWord = this.getRandomWord()
-		this.dificulty = randomWord.length
 		this.game = new Game(randomWord)
 	}
 
@@ -26,7 +29,9 @@ export class Lobby {
 	}
 
 	public getRandomWord(): string {
-		return "perro"
+		const file = require(`../const/${this.language}/wordlist.json`)
+		const wordlist = file[this.dificulty]
+		return wordlist[Math.floor(Math.random() * wordlist.length)]
 	}
 
 	public getGameStats(): string {

@@ -25,6 +25,10 @@ export default class Game {
 		return this.numberOfGuesses - this.guesses.length
 	}
 
+	public getNumberOfGuesses(): number {
+		return this.guesses.length
+	}
+
 	public hasWon(): boolean {
 		return this.guesses.includes("1".repeat(this.word.length))
 	}

@@ -2,10 +2,12 @@ import Game from "./game"
 import LobbyConfigModel from "./LobbyConfigModel"
 
 export default class Lobby {
+	private id : string;
 	private config: LobbyConfigModel
 	private game: Game
 
 	constructor(config: LobbyConfigModel) {
+		this.id = "AF6B1"
 		this.config = config
 	}
 

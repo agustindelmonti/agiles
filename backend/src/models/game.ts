@@ -36,4 +36,8 @@ export default class Game {
 	public isFinished(): boolean {
 		return this.guessesRemaining() == 0 || this.hasWon()
 	}
+
+	public getSecretWord(): string {
+		return this.word
+	}
 }

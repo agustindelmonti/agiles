@@ -1,22 +1,16 @@
 import Game from "./game"
+import LobbyConfigModel from "./LobbyConfigModel"
 
 export default class Lobby {
-	private username: string
+	private config: LobbyConfigModel
 	private game: Game
-	private dificulty: number
-	private language: string
 
-	constructor() {
-		this.dificulty = 5
-		this.language = "es"
-	}
-
-	public setUsername(username: string) {
-		this.username = username
+	constructor(config: LobbyConfigModel) {
+		this.config = config
 	}
 
 	public getUsername() {
-		return this.username
+		return this.config.username
 	}
 
 	public startGame() {
@@ -29,8 +23,8 @@ export default class Lobby {
 	}
 
 	public getRandomWord(): string {
-		const file = require(`../const/${this.language}/wordlist.json`)
-		const wordlist = file[this.dificulty]
+		const file = require(`../const/${this.config.language}/wordlist.json`)
+		const wordlist = file[this.config.difficulty]
 		return wordlist[Math.floor(Math.random() * wordlist.length)]
 	}
 
@@ -38,9 +32,9 @@ export default class Lobby {
 		if (!this.game.isFinished()) throw new Error("Game not finished yet")
 
 		if (!this.game.hasWon()) {
-			return `${this.username}-defeat`
+			return `${this.config.username}-defeat`
 		}
 
-		return `${this.username}-victory-${this.game.getNumberOfGuesses()}`
+		return `${this.config.username}-victory-${this.game.getNumberOfGuesses()}`
 	}
 }

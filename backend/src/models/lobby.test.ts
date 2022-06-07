@@ -11,6 +11,22 @@ describe("config lobby", () => {
 		}
 		let lobby = new Lobby(config)
 		expect(lobby.getUsername()).toEqual("pepe")
+	}),
+	test("wrong language", () => {
+		let config: LobbyConfigModel = {
+			difficulty: 5,
+			language: "en",
+			username: "pepe",
+		}
+		expect(() => new Lobby(config)).toThrow("Language not supported")
+	}),
+	test("wrong difficulty", () => {
+		let config: LobbyConfigModel = {
+			difficulty: 6,
+			language: "es",
+			username: "pepe",
+		}
+		expect(() => new Lobby(config)).toThrow("Difficulty not supported")
 	})
 })
 
@@ -38,6 +54,7 @@ describe("lobby stats", () => {
 		}),
 		test("game status finished", () => {
 			let lobby = new Lobby(config)
+			jest.spyOn(lobby, "getRandomWord").mockReturnValue("perro")
 			lobby.startGame()
 			lobby.getGame().guess("perwo")
 			lobby.getGame().guess("perwo")
@@ -48,6 +65,7 @@ describe("lobby stats", () => {
 		}),
 		test("ongoing game", () => {
 			let lobby = new Lobby(config)
+			jest.spyOn(lobby, "getRandomWord").mockReturnValue("perro")
 			lobby.startGame()
 			expect(() => lobby.getGameStats()).toThrow("Game not finished yet")
 		}),
@@ -60,6 +78,7 @@ describe("lobby stats", () => {
 		}),
 		test("defeat message", () => {
 			let lobby = new Lobby(config)
+			jest.spyOn(lobby, "getRandomWord").mockReturnValue("perro")
 			lobby.startGame()
 			lobby.getGame().guess("perwo")
 			lobby.getGame().guess("perwo")

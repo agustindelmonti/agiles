@@ -17,7 +17,11 @@ router.post(
 	"/lobby/start",
 	(req: CustomRequest<LobbyConfigModel>, res: Response) => {
 		var config = req.body
-		lobby = new Lobby(config)
+		try{
+			lobby = new Lobby(config)
+		} catch(e){
+			res.send(e.message)
+		}
 		res.send(lobby)
 	}
 )

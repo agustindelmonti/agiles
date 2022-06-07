@@ -8,6 +8,8 @@ export default class Lobby {
 
 	constructor(config: LobbyConfigModel) {
 		this.id = "AF6B1"
+		if(config.difficulty !== 5) throw new Error("Difficulty not supported")
+		if(config.language !== "es") throw new Error("Language not supported")
 		this.config = config
 	}
 

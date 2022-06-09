@@ -10,7 +10,7 @@ jobs:
     name: "🧪 Test"
     uses: agustindelmonti/agiles/.github/workflows/test.yml@develop
 
-  release:
+  release-backend:
     name: "🚀 Release backend"
     environment:
       name: development
@@ -34,7 +34,7 @@ jobs:
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true
 
-   release:
+  release-client:
     name: "🚀 Release client"
     environment:
       name: development

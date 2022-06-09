@@ -11,15 +11,15 @@ router.get("/", (req, res) => {
 	res.send(`hello wordle ${cont}`)
 })
 
-var lobby : Lobby;
+var lobby: Lobby
 
 router.post(
 	"/lobby/start",
 	(req: CustomRequest<LobbyConfigModel>, res: Response) => {
 		var config = req.body
-		try{
+		try {
 			lobby = new Lobby(config)
-		} catch(e){
+		} catch (e) {
 			res.send(e.message)
 		}
 		res.send(lobby)
@@ -28,7 +28,7 @@ router.post(
 
 router.post("/lobby/:id/game-start", (req, res) => {
 	//find lobby
-	if(!lobby) res.send("Lobby does not exist")
+	if (!lobby) res.send("Lobby does not exist")
 
 	lobby.startGame()
 	res.send("game started")
@@ -36,19 +36,20 @@ router.post("/lobby/:id/game-start", (req, res) => {
 
 router.post("/lobby/:id/:guess", (req, res) => {
 	//find lobby
-	if(!lobby) res.send("Lobby does not exist")
+	if (!lobby) res.send("Lobby does not exist")
 
 	const game = lobby.getGame()
-	if(!game) res.send("There is not a game started in this lobby")
+	if (!game) res.send("There is not a game started in this lobby")
 
-	if(game.isFinished()) res.send("game finished")
+	if (game.isFinished()) res.send("game finished")
 
 	var result = game.guess(req.params.guess)
 
-	if(!game.isFinished()) res.send({guess: req.params.guess, result: result})
+	if (!game.isFinished()) res.send({ guess: req.params.guess, result: result })
 
-	if(game.hasWon()) res.send(`You have won! The secret word was ${game.getSecretWord()}`)
-	
+	if (game.hasWon())
+		res.send(`You have won! The secret word was ${game.getSecretWord()}`)
+
 	res.send(`You have lost! The secret word was ${game.getSecretWord()}`)
 })
 

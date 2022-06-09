@@ -2,14 +2,14 @@ import Game from "./game"
 import LobbyConfigModel from "./LobbyConfigModel"
 
 export default class Lobby {
-	private id : string;
+	private id: string
 	private config: LobbyConfigModel
 	private game: Game
 
 	constructor(config: LobbyConfigModel) {
 		this.id = "AF6B1"
-		if(config.difficulty !== 5) throw new Error("Difficulty not supported")
-		if(config.language !== "es") throw new Error("Language not supported")
+		if (config.difficulty !== 5) throw new Error("Difficulty not supported")
+		if (config.language !== "es") throw new Error("Language not supported")
 		this.config = config
 	}
 
@@ -27,6 +27,10 @@ export default class Lobby {
 	}
 
 	public getRandomWord(): string {
+		const allowedLang = ["es", "en"]
+		if (!allowedLang.includes(this.config.language))
+			throw new Error("Language not supported")
+
 		const file = require(`../const/${this.config.language}/wordlist.json`)
 		const wordlist = file[this.config.difficulty]
 		return wordlist[Math.floor(Math.random() * wordlist.length)]

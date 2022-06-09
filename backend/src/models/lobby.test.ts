@@ -12,22 +12,22 @@ describe("config lobby", () => {
 		let lobby = new Lobby(config)
 		expect(lobby.getUsername()).toEqual("pepe")
 	}),
-	test("wrong language", () => {
-		let config: LobbyConfigModel = {
-			difficulty: 5,
-			language: "en",
-			username: "pepe",
-		}
-		expect(() => new Lobby(config)).toThrow("Language not supported")
-	}),
-	test("wrong difficulty", () => {
-		let config: LobbyConfigModel = {
-			difficulty: 6,
-			language: "es",
-			username: "pepe",
-		}
-		expect(() => new Lobby(config)).toThrow("Difficulty not supported")
-	})
+		test("wrong language", () => {
+			let config: LobbyConfigModel = {
+				difficulty: 5,
+				language: "en",
+				username: "pepe",
+			}
+			expect(() => new Lobby(config)).toThrow("Language not supported")
+		}),
+		test("wrong difficulty", () => {
+			let config: LobbyConfigModel = {
+				difficulty: 6,
+				language: "es",
+				username: "pepe",
+			}
+			expect(() => new Lobby(config)).toThrow("Difficulty not supported")
+		})
 })
 
 describe("lobby stats", () => {

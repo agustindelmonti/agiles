@@ -10,8 +10,8 @@ jobs:
     name: "🧪 Test"
     uses: agustindelmonti/agiles/.github/workflows/test.yml@develop
 
-  release:
-    name: "🚀 Release development"
+  release-backend:
+    name: "🚀 Release backend"
     environment:
       name: development
       url: https://wordle-dev.herokuapp.com/
@@ -25,11 +25,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: "🚀 deploy to heroku"
+      - name: "🚀 deploy"
         uses: akhileshns/heroku-deploy@v3.12.12
         with:
           appdir: backend
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true
+
+  release-client:
+    name: "🚀 Release client"
+    environment:
+      name: development
+      url: https://wordle-dev-client.herokuapp.com/
+    needs:
+      - test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "🚀 deploy"
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          appdir: client
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: wordle-dev-client
           heroku_email: ${{secrets.HEROKU_EMAIL}}
           usedocker: true

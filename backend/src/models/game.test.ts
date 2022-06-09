@@ -38,6 +38,6 @@ describe("game", () => {
 			game.guess("perro")
 			expect(game.isFinished()).toEqual(true)
 			expect(game.hasWon()).toEqual(true)
-			expect(() => game.guess("perro")).toThrow("Game alredy finished")
+			expect(() => game.guess("perro")).toThrow("Game already finished")
 		})
 })

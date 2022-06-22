@@ -3,7 +3,7 @@ import { Formik, Form, FormikHelpers, Field } from "formik";
 import { langOptions } from "./langOptions";
 import { difficultyOptions } from "./difficultyOptions";
 import { ConfigValues } from "./ConfigValues";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const initialValues: ConfigValues = {
   username: "",
@@ -14,6 +14,7 @@ const initialValues: ConfigValues = {
 const LobbyConfigForm = () => {
   const { id } = useParams<string>();
   const [error, setError] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (
     values: ConfigValues,
@@ -35,6 +36,8 @@ const LobbyConfigForm = () => {
       }),
       fetch(`${url}/lobby/${id}/game-start`, requestOptions),
     ]).catch((_) => setError(true));
+
+    return navigate(`/lobby/${id}/game`);
   };
 
   return (

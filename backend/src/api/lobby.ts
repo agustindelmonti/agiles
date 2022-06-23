@@ -47,16 +47,16 @@ router.post("/:id/:guess", (req, res) => {
 	const game = lobby.getGame()
 	if (!game) res.send("There is not a game started in this lobby")
 
-	if (game.isFinished()) res.send("game finished")
+	if (game.isFinished()) res.send({message:"game finished", ended: true})
 
-	var result = game.guess(req.params.guess)
+	const result = game.guess(req.params.guess)
 
-	if (!game.isFinished()) res.send({ guess: req.params.guess, result: result })
+	if (!game.isFinished()) res.status(200).send({ guess: req.params.guess, result, ended: false })
 
 	if (game.hasWon())
-		res.send(`You have won! The secret word was ${game.getSecretWord()}`)
+		res.status(200).send({guess: req.params.guess, result, message: `You have won! The secret word was ${game.getSecretWord()}`, ended: true, status: "Won"})
 
-	res.send(`You have lost! The secret word was ${game.getSecretWord()}`)
+	res.status(200).send({guess: req.params.guess, result, message:`You have lost! The secret word was ${game.getSecretWord()}`, ended: true, status: "Lost"})
 })
 
 export default router

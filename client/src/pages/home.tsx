@@ -14,7 +14,7 @@ function HomePage() {
 
   const handleSubmit = async () => {
     const url = process.env.REACT_APP_API_URL;
-
+    
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },

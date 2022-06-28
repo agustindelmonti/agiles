@@ -1,13 +1,12 @@
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { FormikHelpers } from "formik";
 import { useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+import { CompletedRow } from "../components/grid/CompletedRow";
+import { CurrentRow } from "../components/grid/CurrentRow";
+import { EmptyRow } from "../components/grid/EmptyRow";
 import { Attempt } from "../components/lobby/Guess";
 import { WordValues } from "../components/lobby/WordValues";
-
-const initialValues: WordValues = {
-  word: "",
-};
 
 const CHALLANGES = 5;
 const WORD_LENGHT = 5;
@@ -55,67 +54,26 @@ function Game() {
     textInput.current?.focus();
   };
 
+  const emptyRows = [...Array(CHALLANGES - attempts.length - 1)];
+
   return (
     <>
       <StyledContainer>
         <StyledGrid>
-          {attempts.map((a, x) => (
-            <StyledRow key={x}>
-              {a.guess.split("").map((letter, i) => (
-                <FilledCell status={a.result[i]} key={i}>
-                  {letter}
-                </FilledCell>
-              ))}
-            </StyledRow>
+          {attempts.map((a, i) => (
+            <CompletedRow key={i} attempt={a} />
           ))}
 
           {!gameStatus && (
-            <div style={{ height: "62.5px" }}>
-              <Formik
-                initialValues={initialValues}
-                onSubmit={(values, actions) => handleSubmit(values, actions)}
-              >
-                {({ values }) => (
-                  <Form style={{ height: "100%" }}>
-                    <StyledRow>
-                      {values.word.split("").map((letter, i) => (
-                        <EmptyCell key={i}>{letter}</EmptyCell>
-                      ))}
-                      {[
-                        ...Array(WORD_LENGHT - values.word.split("").length),
-                      ].map((letter, i) => (
-                        <EmptyCell key={i}>{letter}</EmptyCell>
-                      ))}
-                    </StyledRow>
-                    <Field
-                      id="word"
-                      name="word"
-                      autoComplete="off"
-                      type="text"
-                      autoFocus
-                      innerRef={textInput}
-                      onBlur={autoFocus}
-                      maxLength={WORD_LENGHT}
-                      style={{
-                        width: "0px",
-                        height: "0px",
-                        outline: "none",
-                        border: "none",
-                      }}
-                    />
-                    <button type="submit" hidden disabled={gameEnded} />
-                  </Form>
-                )}
-              </Formik>
-            </div>
+            <CurrentRow
+              length={WORD_LENGHT}
+              isDisabled={gameEnded}
+              handleSubmit={handleSubmit}
+            />
           )}
 
-          {[...Array(CHALLANGES - attempts.length - 1)].map((_, i) => (
-            <StyledRow key={i}>
-              {[...Array(WORD_LENGHT)].map((_, x) => (
-                <EmptyCell key={x} />
-              ))}
-            </StyledRow>
+          {emptyRows.map((_, i) => (
+            <EmptyRow key={i} length={WORD_LENGHT} />
           ))}
         </StyledGrid>
       </StyledContainer>
@@ -152,7 +110,7 @@ const StyledGrid = styled.div`
   padding: 10px;
 `;
 
-const StyledRow = styled.div`
+export const StyledRow = styled.div`
   display: grid;
   gap: 5px;
   grid-template-columns: repeat(5, 1fr);
@@ -176,13 +134,13 @@ const Cell1 = styled.div`
   user-select: none;
 `;
 
-const FilledCell = styled<any>(Cell1)`
+export const FilledCell = styled<any>(Cell1)`
   color: white;
   background-color: ${(p) =>
     p.status === "*" ? "#c9b458" : p.status === "1" ? "#6aaa64" : "#787c7e"};
 `;
 
-const EmptyCell = styled(Cell1)`
+export const EmptyCell = styled(Cell1)`
   color: black;
   background-color: inherit;
   border: 2px solid #e2e8f0;

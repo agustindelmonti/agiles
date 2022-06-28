@@ -1,5 +1,5 @@
 import { FormikHelpers } from "formik";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { CompletedRow } from "../components/grid/CompletedRow";
@@ -17,8 +17,6 @@ function Game() {
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [gameEnded, setGameEnded] = useState(false);
   const [gameStatus, setGameStatus] = useState("");
-
-  const textInput = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = async (
     values: WordValues,
@@ -50,11 +48,7 @@ function Game() {
     }
   };
 
-  const autoFocus = () => {
-    textInput.current?.focus();
-  };
-
-  const emptyRows = [...Array(CHALLANGES - attempts.length - 1)];
+  const emptyRows = [...Array(Math.max(0, CHALLANGES - attempts.length - 1))];
 
   return (
     <>

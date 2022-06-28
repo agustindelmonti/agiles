@@ -7,8 +7,8 @@ const app = express()
 
 const allowedOrigins = [
 	"http://localhost:3000",
-	"https://wordle-dev-client.herokuapp.com/",
-	"https://wordle-prod-client.herokuapp.com/",
+	"https://wordle-dev-client.herokuapp.com",
+	"https://wordle-prod-client.herokuapp.com",
 ]
 
 const options: cors.CorsOptions = {

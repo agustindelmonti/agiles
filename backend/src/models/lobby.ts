@@ -1,5 +1,6 @@
 import Game from "./game"
 import LobbyConfigModel from "./LobbyConfigModel"
+import crypto from "crypto"
 
 export default class Lobby {
 	private id: string
@@ -7,10 +8,8 @@ export default class Lobby {
 	private game: Game
 
 	constructor(config: LobbyConfigModel) {
-		this.id = "AF6B1"
-		if (config.difficulty !== 5) throw new Error("Difficulty not supported")
-		if (config.language !== "es") throw new Error("Language not supported")
-		this.config = config
+		this.id = crypto.randomUUID().substring(0, 8)
+		this.updateConfig(config)
 	}
 
 	public getUsername() {
@@ -24,6 +23,10 @@ export default class Lobby {
 
 	public getGame(): Game {
 		return this.game
+	}
+
+	public getId(): string {
+		return this.id
 	}
 
 	public getRandomWord(): string {
@@ -44,5 +47,11 @@ export default class Lobby {
 		}
 
 		return `${this.config.username}-victory-${this.game.getNumberOfGuesses()}`
+	}
+
+	public updateConfig(config: LobbyConfigModel) {
+		if (config.difficulty !== 5) throw new Error("Difficulty not supported")
+		if (config.language !== "es") throw new Error("Language not supported")
+		this.config = config
 	}
 }

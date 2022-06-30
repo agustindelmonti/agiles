@@ -40,7 +40,7 @@ function Game() {
     if (res && res.status === 200) {
       if (data.ended) {
         setGameEnded(true);
-        setGameStatus(data.status);
+        setGameStatus(data.message);
       }
       const newAttempt: Attempt = { guess: data.guess, result: data.result };
       setAttempts((attempts) => [...attempts, newAttempt]);

@@ -50,7 +50,7 @@ export default class Lobby {
 	}
 
 	public updateConfig(config: LobbyConfigModel) {
-		if (config.difficulty !== 5) throw new Error("Difficulty not supported")
+		if (config.difficulty.toString() !== '5') throw new Error("Difficulty not supported")
 		if (config.language !== "es") throw new Error("Language not supported")
 		this.config = config
 	}

@@ -34,15 +34,15 @@ function HomePage() {
 
   return (
     <div>
-      <StyledHero>
+      <div className="centered">
         <h1>Wordle</h1>
         <p>Un juego para adivinar palabras y competir con tus amigos</p>
-      </StyledHero>
-      <StyledHero>
+      </div>
+      <div className="centered">
         <Button type="submit" onClick={handleSubmit}>
           Crear sala
         </Button>
-      </StyledHero>
+      </div>
       <Footer>
         <FooterLinks>
           <Link to="/about">Acerca de</Link>
@@ -53,16 +53,6 @@ function HomePage() {
 }
 
 export default HomePage;
-
-const StyledHero = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  margin-top: 3rem;
-`;
 
 const Footer = styled.footer`
   display: flex;

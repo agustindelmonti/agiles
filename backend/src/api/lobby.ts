@@ -49,7 +49,7 @@ router.post(
 		try {
 			lobby.updateConfig(config)
 			lobby.startGame()
-			res.send({ message: `Game started` })
+			res.send(lobby)
 		} catch (e) {
 			return res.status(400).send({ message: e.message })
 		}

@@ -36,15 +36,18 @@ const LobbyConfigForm = () => {
       body: JSON.stringify(values),
     })
       .then((res) => {
-        if (res.status === 200) {
-          return navigate(`/lobby/${id}/game`);
-        } else {
-          return res.json();
-        }
+        if (res.status == 200) return res.json();
+        throw new Error();
+      })
+      .then((res) => {
+        return navigate(`/lobby/${id}/game`, {
+          state: {
+            challanges: 5,
+            length: res.config.difficulty,
+          },
+        });
       })
       .catch((_) => setError("Servicio no disponible"));
-
-    setError(res.message);
   };
 
   return (

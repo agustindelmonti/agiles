@@ -17,8 +17,6 @@ const initialValues: WordValues = {
 };
 
 export const CurrentRow = ({ length, isDisabled, handleSubmit }: Props) => {
-  const emptyCells = Array.from(Array(length - length));
-
   const textInput = useRef<HTMLInputElement | null>(null);
 
   const autoFocus = () => {
@@ -31,8 +29,8 @@ export const CurrentRow = ({ length, isDisabled, handleSubmit }: Props) => {
       onSubmit={(values, actions) => handleSubmit(values, actions)}
     >
       {({ values }) => (
-        <Form style={{ height: "62.5px" }}>
-          <StyledRow>
+        <Form>
+          <StyledRow columns={length}>
             {values.word.split("").map((letter, i) => (
               <EmptyCell key={i}>{letter}</EmptyCell>
             ))}
@@ -49,6 +47,7 @@ export const CurrentRow = ({ length, isDisabled, handleSubmit }: Props) => {
             innerRef={textInput}
             onBlur={autoFocus}
             maxLength={length}
+            hidden={isDisabled}
             style={{
               width: "0px",
               height: "0px",

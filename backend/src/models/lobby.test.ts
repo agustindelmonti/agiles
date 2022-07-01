@@ -15,14 +15,14 @@ describe("config lobby", () => {
 		test("wrong language", () => {
 			let config: LobbyConfigModel = {
 				difficulty: 5,
-				language: "en",
+				language: "ru",
 				username: "pepe",
 			}
 			expect(() => new Lobby(config)).toThrow("Language not supported")
 		}),
 		test("wrong difficulty", () => {
 			let config: LobbyConfigModel = {
-				difficulty: 6,
+				difficulty: 16,
 				language: "es",
 				username: "pepe",
 			}

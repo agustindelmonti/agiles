@@ -1,6 +1,6 @@
 import { FormikHelpers } from "formik";
-import { useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { CompletedRow } from "../components/grid/CompletedRow";
 import { CurrentRow } from "../components/grid/CurrentRow";
@@ -10,15 +10,21 @@ import { WordValues } from "../components/lobby/WordValues";
 
 const CHALLANGES = 5;
 const WORD_LENGHT = 5;
+const url = process.env.REACT_APP_API_URL;
 
 function Game() {
   const { id } = useParams<string>();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const { challanges, length } = location.state as {
+    challanges: number;
+    length: number;
+  };
+
   const [attempts, setAttempts] = useState<Attempt[]>([]);
   const [gameEnded, setGameEnded] = useState(false);
   const [gameStatus, setGameStatus] = useState("");
-
-  const textInput = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = async (
     values: WordValues,
@@ -32,7 +38,6 @@ function Game() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     };
-    const url = process.env.REACT_APP_API_URL;
     const res = await fetch(
       `${url}/lobby/${id}/${values.word}`,
       requestOptions
@@ -42,7 +47,7 @@ function Game() {
     if (res && res.status === 200) {
       if (data.ended) {
         setGameEnded(true);
-        setGameStatus(data.status);
+        setGameStatus(data.message);
       }
       const newAttempt: Attempt = { guess: data.guess, result: data.result };
       setAttempts((attempts) => [...attempts, newAttempt]);
@@ -50,30 +55,24 @@ function Game() {
     }
   };
 
-  const autoFocus = () => {
-    textInput.current?.focus();
-  };
-
-  const emptyRows = [...Array(CHALLANGES - attempts.length - 1)];
+  const emptyRows = [...Array(Math.max(0, challanges - attempts.length - 1))];
 
   return (
     <>
       <StyledContainer>
-        <StyledGrid>
+        <StyledGrid rows={challanges}>
           {attempts.map((a, i) => (
             <CompletedRow key={i} attempt={a} />
           ))}
 
-          {!gameStatus && (
-            <CurrentRow
-              length={WORD_LENGHT}
-              isDisabled={gameEnded}
-              handleSubmit={handleSubmit}
-            />
-          )}
+          <CurrentRow
+            length={length}
+            isDisabled={gameEnded}
+            handleSubmit={handleSubmit}
+          />
 
           {emptyRows.map((_, i) => (
-            <EmptyRow key={i} length={WORD_LENGHT} />
+            <EmptyRow key={i} length={length} />
           ))}
         </StyledGrid>
       </StyledContainer>
@@ -99,10 +98,10 @@ const StyledContainer = styled.div`
   flex-direction: row;
 `;
 
-const StyledGrid = styled.div`
+const StyledGrid = styled.div<{ rows: number }>`
   display: grid;
   gap: 5px;
-  grid-template-rows: repeat(6, 1fr);
+  grid-template-rows: repeat(${(p) => p.rows}, 1fr);
   width: 100%;
   height: 100%;
   max-width: 352.5px;
@@ -110,10 +109,10 @@ const StyledGrid = styled.div`
   padding: 10px;
 `;
 
-export const StyledRow = styled.div`
+export const StyledRow = styled.div<{ columns: number }>`
   display: grid;
   gap: 5px;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(${(p) => p.columns}, 1fr);
   max-width: 100%;
   width: 100%;
   height: 100%;
@@ -126,7 +125,7 @@ const Cell1 = styled.div`
   width: 100%;
   max-width: 62px;
   height: 100%;
-  max-height: 62px;
+  max-height: 69px;
 
   font-size: 1.875rem;
   font-weight: bold;

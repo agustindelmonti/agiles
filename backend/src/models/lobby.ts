@@ -50,8 +50,16 @@ export default class Lobby {
 	}
 
 	public updateConfig(config: LobbyConfigModel) {
-		if (config.difficulty !== 5) throw new Error("Difficulty not supported")
-		if (config.language !== "es") throw new Error("Language not supported")
+		const allowedLang = ["es", "en"]
+		if (!allowedLang.includes(config.language)) {
+			throw new Error("Language not supported")
+		}
+
+		const allowedDificulties = ["5", "6", "7"]
+		if (!allowedDificulties.includes(config.difficulty.toString())) {
+			throw new Error("Difficulty not supported")
+		}
+
 		this.config = config
 	}
 }

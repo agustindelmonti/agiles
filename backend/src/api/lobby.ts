@@ -8,8 +8,10 @@ var lobby: Lobby
 const router = Router()
 
 router.get("/:id", (req, res) => {
-	if (!lobby || lobby.getId() !== req.params.id) res.sendStatus(404)
-	res.send(lobby)
+	if (!lobby || lobby.getId() !== req.params.id) {
+		return res.status(404).send({ message: `Lobby does not exist` })
+	}
+	return res.send(lobby)
 })
 
 router.post("/start", (req: CustomRequest<LobbyConfigModel>, res: Response) => {
@@ -17,57 +19,87 @@ router.post("/start", (req: CustomRequest<LobbyConfigModel>, res: Response) => {
 	try {
 		lobby = new Lobby(config)
 	} catch (e) {
-		res.send(e.message)
+		return res.send(e.message)
 	}
-	res.send(lobby)
+	return res.send(lobby)
 })
 
 router.patch("/:id", (req: CustomRequest<LobbyConfigModel>, res: Response) => {
-	if (!lobby || lobby.getId() !== req.params.id) res.sendStatus(404)
+	if (!lobby || lobby.getId() !== req.params.id) {
+		return res.status(404).send({ message: `Lobby does not exist` })
+	}
 
 	var config = req.body
 	try {
 		lobby.updateConfig(config)
 	} catch (e) {
-		res.send(e.message)
+		return res.status(400).send({ message: e.message })
 	}
 	res.send(lobby)
 })
 
-router.post("/:id/game-start", (req, res) => {
-	if (!lobby || lobby.getId() !== req.params.id) res.sendStatus(404)
+router.post(
+	"/:id/game-start",
+	(req: CustomRequest<LobbyConfigModel>, res: Response) => {
+		if (!lobby || lobby.getId() !== req.params.id) {
+			return res.status(404).send({ message: `Lobby does not exist` })
+		}
 
-	lobby.startGame()
-	res.send("game started")
-})
+		var config = req.body
+		try {
+			lobby.updateConfig(config)
+			lobby.startGame()
+			res.send(lobby)
+		} catch (e) {
+			return res.status(400).send({ message: e.message })
+		}
+	}
+)
 
 router.post("/:id/:guess", (req, res) => {
-	if (!lobby || lobby.getId() !== req.params.id) res.sendStatus(404)
+	if (!lobby || lobby.getId() !== req.params.id) {
+		return res.status(404).send({ message: `Lobby does not exist` })
+	}
 
 	const game = lobby.getGame()
-	if (!game) res.send("There is not a game started in this lobby")
+	if (!game) {
+		return res.status(404).send({
+			message: `No game ongoing in this lobby`,
+			link: `${req.protocol}://${req.get("host")}${req.originalUrl}/${
+				req.params.id
+			}/game-start`,
+		})
+	}
 
-	if (game.isFinished()) res.send({ message: "game finished", ended: true })
+	if (game.isFinished())
+		return res.send({ message: "game finished", ended: true })
 
 	const result = game.guess(req.params.guess)
 
 	if (!game.isFinished())
-		res.status(200).send({ guess: req.params.guess, result, ended: false })
+		return res.send({
+			guess: req.params.guess,
+			result,
+			ended: false,
+			secret: game.getSecretWord(),
+		})
 
 	if (game.hasWon())
-		res.status(200).send({
+		return res.send({
 			guess: req.params.guess,
 			result,
 			message: `You have won! The secret word was ${game.getSecretWord()}`,
 			ended: true,
+			secret: game.getSecretWord(),
 			status: "Won",
 		})
 
-	res.status(200).send({
+	return res.send({
 		guess: req.params.guess,
 		result,
 		message: `You have lost! The secret word was ${game.getSecretWord()}`,
 		ended: true,
+		secret: game.getSecretWord(),
 		status: "Lost",
 	})
 })

@@ -10,7 +10,7 @@ export const CompletedRow = ({ attempt }: Props) => {
   const splitGuess = guess.split("");
 
   return (
-    <StyledRow>
+    <StyledRow columns={result.length}>
       {splitGuess.map((letter, i) => (
         <FilledCell status={result[i]} key={i}>
           {letter}

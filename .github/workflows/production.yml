@@ -1,0 +1,59 @@
+name: Production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: "🧪 Test"
+    uses: agustindelmonti/agiles/.github/workflows/test.yml@develop
+
+  release-backend:
+    name: "🚀 Release backend"
+    environment:
+      name: production
+      url: https://wordle-prod.herokuapp.com/
+    needs:
+      - test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "🚀 deploy"
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          appdir: backend
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true
+
+  release-client:
+    name: "🚀 Release client"
+    environment:
+      name: production
+      url: https://wordle-prod-client.herokuapp.com/
+    needs:
+      - test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "☁️ checkout repository"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: "🚀 deploy"
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          appdir: client
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: wordle-prod-client
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          usedocker: true

@@ -1,6 +1,6 @@
 import app from "./src/app"
 
-const PORT = 3000
-const HOST = "0.0.0.0"
+var PORT = process.env.PORT || 8080
+var HOST = process.env.HOST || "0.0.0.0"
 
-app.listen(PORT, HOST)
+app.listen(Number(PORT), HOST)

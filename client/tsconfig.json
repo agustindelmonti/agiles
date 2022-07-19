@@ -1,26 +1,26 @@
 {
+  "ts-node": {
+    "files": true
+  },
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "allowJs": true,
+    "declaration": true,
     "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx"
+    "target": "ES2017",
+    "module": "CommonJS",
+    "types": ["node", "cypress"],
+    "lib": ["dom", "ES2021"]
   },
   "include": [
-    "src"
+    "lib/**/*.ts",
+    "test/**/*.ts",
+    "methods.ts",
+    "declarations.d.ts",
+    "browserify.ts",
+    "esbuild.ts",
+    "webpack.ts"
   ]
 }

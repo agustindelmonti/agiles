@@ -22,7 +22,7 @@ export default class Game {
 	}
 
 	public guessesRemaining(): number {
-		return this.numberOfGuesses + 5 - this.guesses.length
+		return this.numberOfGuesses - this.guesses.length
 	}
 
 	public getNumberOfGuesses(): number {

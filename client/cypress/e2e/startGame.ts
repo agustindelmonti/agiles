@@ -17,7 +17,7 @@ When('click play button', () => {
 });
 
 Then('redirected to game page', () => {
-    cy.url().contains('wordle')
+    cy.url().should('contain', 'wordle')
 })
 
 

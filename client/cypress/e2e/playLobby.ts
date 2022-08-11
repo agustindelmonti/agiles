@@ -18,15 +18,18 @@ When('click play button', () => {
 
 When('type wrong word', () => {
     cy.get('#word').type('hiajs').type('{enter}')
+    cy.wait(1000)
     cy.get('#word').type('hiajs').type('{enter}')
+    cy.wait(1000)
     cy.get('#word').type('hiajs').type('{enter}')
+    cy.wait(1000)
     cy.get('#word').type('hiajs').type('{enter}')
-    cy.get('#word').type('hiajs').type('{enter}')
+    cy.wait(1000)
     cy.get('#word').type('hiajs').type('{enter}')
 });
 
 Then('redirected to game page', () => {
-    cy.url().contains('wordle')
+    cy.url().should('contain', 'wordle')
 })
 
 
